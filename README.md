@@ -1,1 +1,1 @@
-Creating a SDC for reviews
+Creating an SDC service for reviews
