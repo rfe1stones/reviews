@@ -51,7 +51,7 @@ app.get('/reviews', (req, res) => {
   db.query(selectQuery, [storedParam.product_id], (error, results) => {
     //Consideration:
     //creating a secondary DB query to add in the photos section manually into the storedParam
-    //In this case it will join the table itself 
+    //In this case it will join the table itself
     results.map(element => {
       element.date = (element.date).replace(/"/g , '');
       element.summary = (element.summary).replace(/"/g, '');
@@ -69,10 +69,18 @@ app.get('/reviews', (req, res) => {
     res.send(storedParam);
   })
  } else {
-  selectQuery = 'SELECT reviewer_name FROM reviews WHERE product_id = ?'
+  selectQuery = 'SELECT r.*, p.review_id, GROUP_CONCAT(p.url) AS "photos" FROM reviews r INNER JOIN reviews_photos p ON r.id = p.review_id AND r.product_id = ? GROUP BY p.review_id;'
   db.query(selectQuery, [storedParam.product_id], (error, results) => {
-    console.log(results);
-    res.send(results)
+    results.map(element => {
+      element.date = (element.date).replace(/"/g , '');
+      element.summary = (element.summary).replace(/"/g, '');
+      element.body = (element.body).replace(/"/g, '');
+      element.reviewer_name = (element.reviewer_name).replace(/"/g, '');
+      element.reviewer_email = (element.reviewer_email).replace(/"/g, '');
+      element.photos = (element.photos).replace(/"/g, '').split(',');
+    })
+    storedParam.results = results;
+    res.send(storedParam)
   })
   console.log(storedParam.product_id)
  }
@@ -89,6 +97,27 @@ app.get('/reviews/meta', (req, res) => {
 })
 
 app.put('/reviews/:review_id/:type', (req, res) => {
+  if(req.params.type='report') {
+    let selectQuery = 'UPDATE reviews SET reported="true" WHERE id=?';
+    db.query(selectQuery, [req.params.review_id], (error, results) => {
+      if(error) {
+        console.log(error)
+      } else {
+        console.log('Successfully Updated')
+      }
+    })
+  } else if(req.params.type='helpful') {
+    let selectQuery = 'UPDATE reviews SET helpfulness = helpfulness+1 WHERE id=?';
+    db.query(selectQuery, [req.params.review_id], (error, results) => {
+      if(error) {
+        console.log(error)
+      } else {
+        console.log('Successfully Updated')
+      }
+    })
+  } else {
+    res.send(404);
+  }
   console.log(req.params.review_id)
   console.log(req.params.type)
 })
@@ -103,9 +132,10 @@ app.post('/reviews', (req, res) => {
     name - text
     email - text
     photos - [text] array of text urls
-    characteristics - object
+    characteristics - object (characteristic_id and value)
 
   */
+ let insertQuery = 'INSERT INTO reviews (product_id, rating, summary, body, recomment, name, email, photos) VALUES'
  //post requirements
 })
 
