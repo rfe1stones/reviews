@@ -36,7 +36,7 @@ stream.on('data', function(data) {
     return s.split(',');
   })
   stream.pause();
-    let insertQuery = 'INSERT INTO characteristic_reviews (id, product_id, name) VALUES ?'
+    let insertQuery = 'INSERT INTO characteristics (id, product_id, name) VALUES ?'
     connection.query(insertQuery, [newText], (err, results) => {
       if(err) {
         console.log(err)
