@@ -9,22 +9,23 @@
 -- Table 'reviews'
 --
 -- ---
+USE sdc;
 
 DROP TABLE IF EXISTS `reviews`;
 
 CREATE TABLE `reviews` (
-  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
-  `product_id` INTEGER NULL DEFAULT NULL,
-  `rating` VARCHAR NULL DEFAULT NULL,
-  `date` VARCHAR NULL DEFAULT NULL,
-  `summary` TINYINT NULL DEFAULT NULL,
-  `body` VARCHAR NULL DEFAULT NULL,
-  `recommend` VARCHAR NULL DEFAULT NULL,
-  `reported` INTEGER NULL DEFAULT NULL,
-  `reviewer_name` INTEGER NULL DEFAULT NULL,
-  `reviewer_email` INTEGER NULL DEFAULT NULL,
-  `response` INTEGER NULL DEFAULT NULL,
-  `helpfulness` INTEGER NULL DEFAULT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `product_id` INT NULL,
+  `rating` INT NULL,
+  `date` VARCHAR(50) NULL,
+  `summary` VARCHAR(150) NULL,
+  `body` VARCHAR(500) NULL,
+  `recommend` VARCHAR(10) NULL,
+  `reported` VARCHAR(10) NULL,
+  `reviewer_name` VARCHAR(50) NULL,
+  `reviewer_email` VARCHAR(100) NULL,
+  `response` VARCHAR(255) NULL,
+  `helpfulness` INT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -36,9 +37,9 @@ CREATE TABLE `reviews` (
 DROP TABLE IF EXISTS `reviews_photos`;
 
 CREATE TABLE `reviews_photos` (
-  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
-  `review_id` INTEGER NULL DEFAULT NULL,
-  `url` INTEGER NULL DEFAULT NULL,
+  `id` INTEGER NOT NULL AUTO_INCREMENT,
+  `review_id` INTEGER NULL,
+  `url` VARCHAR(225) NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -50,9 +51,9 @@ CREATE TABLE `reviews_photos` (
 DROP TABLE IF EXISTS `characteristics`;
 
 CREATE TABLE `characteristics` (
-  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
-  `product_id` INTEGER NULL DEFAULT NULL,
-  `name` INTEGER NULL DEFAULT NULL,
+  `id` INTEGER NOT NULL AUTO_INCREMENT,
+  `product_id` INTEGER NULL,
+  `name` VARCHAR(40) NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -64,10 +65,10 @@ CREATE TABLE `characteristics` (
 DROP TABLE IF EXISTS `characteristic_reviews`;
 
 CREATE TABLE `characteristic_reviews` (
-  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
-  `characteristic_id` INTEGER NULL DEFAULT NULL,
-  `review_id` INTEGER NULL DEFAULT NULL,
-  `value` INTEGER NULL DEFAULT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `characteristic_id` INTEGER NULL,
+  `review_id` INTEGER NULL,
+  `value` INTEGER NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -86,10 +87,10 @@ ALTER TABLE `reviews_photos` ADD INDEX (`review_id`);
 -- Table Properties
 -- ---
 
--- ALTER TABLE `reviews` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `reviews_photos` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `characteristics` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `characteristic_reviews` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `reviews` ENGINE=InnoDL CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `reviews_photos` ENGINE=InnoDL CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `characteristics` ENGINE=InnoDL CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `characteristic_reviews` ENGINE=InnoDL CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ---
 -- Test Data
