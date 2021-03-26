@@ -79,6 +79,9 @@ ALTER TABLE `reviews_photos` ADD FOREIGN KEY (review_id) REFERENCES `reviews` (`
 ALTER TABLE `characteristic_reviews` ADD FOREIGN KEY (characteristic_id) REFERENCES `characteristics` (`id`);
 ALTER TABLE `characteristic_reviews` ADD FOREIGN KEY (review_id) REFERENCES `reviews` (`id`);
 
+ALTER TABLE `characteristics` ADD INDEX (`id`);
+ALTER TABLE `reviews` ADD INDEX (`product_id`);
+ALTER TABLE `reviews_photos` ADD INDEX (`review_id`);
 -- ---
 -- Table Properties
 -- ---
