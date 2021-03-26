@@ -10,6 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static(__dirname + '/../client/dist'));
 
+
 app.get('/reviews', (req, res) => {
   //console.log('hit here x2')
   let storedParam = { count: 5, page: 1, product_id: null }
@@ -90,11 +91,90 @@ app.get('/reviews', (req, res) => {
 })
 
 app.get('/reviews/meta', (req, res) => {
-  console.log(`${req._parsedUrl.query.split('=')[0]}: `,req._parsedUrl.query.split('=')[1])
-
+  //console.log(`${req._parsedUrl.query.split('=')[0]}: `,req._parsedUrl.query.split('=')[1])
+  let structuredResult = {product_id: 1, ratings: {}, recommended: {0:0, 1:0}, characteristics:{}}
+  let qualityCount = 0;
+  let comfortCount = 0;
+  let fitCount = 0;
+  let lengthCount = 0;
+  if(req._parsedUrl.query !== null) {}
+  let testQuery = 'SELECT v.rating, v.recommend, c.id, c.name, r.review_id, r.value FROM characteristics c INNER JOIN characteristic_reviews r ON c.id=r.characteristic_id INNER JOIN reviews v ON v.product_id = c.product_id AND v.product_id = 1 LIMIT 30;'
   //would query a join using the product_id in characteristics with characteristics_review and reviews
   //to show the ratings, recommended, characteristics with id, name, value
+  db.query(testQuery, (error, results) => {
+    //console.log(results);
+    results.map((e) => {
+      //Ratings sorted into StructuredResult
+      if(!structuredResult.ratings[e.rating]) {
+        structuredResult.ratings[e.rating] = 1
+      } else {
+        structuredResult.ratings[e.rating] = structuredResult.ratings[e.rating] + 1;
+      }
+
+      //Recommend sorted into structuredResult
+      if(e.recommend = 'true' || '1') {
+        structuredResult.recommended[1] = structuredResult.recommended[1] + 1
+      } else {
+        structuredResult.recommended[0] = structuredResult.recommended[0] + 1
+      }
+
+      //Characteristics sorted into structuredResult
+      if(e.name === '"Quality"') {
+        if(!structuredResult.characteristics[e.name]) {
+          structuredResult.characteristics[e.name.replace(/["]/g, '')] = {id: e.id, value: e.value};
+          qualityCount++;
+        } else {
+          structuredResult.characteristics[e.name]['value'] = structuredResult.characteristics[e.name]['value'] + e.value;
+          qualityCount++;
+        }
+      } else if(e.name === '"Comfort"') {
+        if(!structuredResult.characteristics[e.name]) {
+          structuredResult.characteristics[e.name.replace(/["]/g, '')] = {id: e.id, value: e.value};
+          comfortCount++;
+        } else {
+          structuredResult.characteristics[e.name].value = structuredResult.characteristics[e.name].value + e.value;
+          comfortCount++;
+        }
+      } else if(e.name === '"Fit"') {
+        if(!structuredResult.characteristics[e.name]) {
+          structuredResult.characteristics[e.name.replace(/["]/g, '')] = {id: e.id, value: e.value};
+          fitCount++;
+        } else {
+          structuredResult.characteristics[e.name].value = structuredResult.characteristics[e.name].value + e.value;
+          fitCount++;
+        }
+      } else if(e.name === '"Length"') {
+        if(!structuredResult.characteristics[e.name]) {
+          structuredResult.characteristics[e.name.replace(/["]/g, '')] = {id: e.id, value: e.value};
+          // structuredResult.characteristics[e.name] = {};
+          // structuredResult.charactersitics[e.name]['id'] = e.id;
+          // structuredResult.charactersitics[e.name]['value'] = e.value;
+          lengthCount++;
+        } else {
+          structuredResult.characteristics[e.name].value = structuredResult.characteristics[e.name].value + e.value;
+          lengthCount++;
+        }
+      }
+    })
+
+    if(structuredResult.characteristics['Quality']) {
+      structuredResult.characteristics['Quality'].value = (structuredResult.characteristics['Quality'].value / qualityCount).toFixed(4)
+    }
+    if(structuredResult.characteristics['Comfort']) {
+      structuredResult.characteristics['Comfort'].value = (structuredResult.characteristics['Comfort'].value / comfortCount).toFixed(4)
+    }
+    if(structuredResult.characteristics['Fit']) {
+      structuredResult.characteristics['Fit'].value = (structuredResult.characteristics['Fit'].value / fitCount).toFixed(4)
+    }
+    if(structuredResult.characteristics['Length']) {
+      structuredResult.characteristics['Length'].value = (structuredResult.characteristics['Length'].value / lengthCount).toFixed(4)
+    }
+
+    res.send(structuredResult);
+  })
 })
+
+
 
 app.put('/reviews/:review_id/:type', (req, res) => {
   if(req.params.type='report') {
@@ -135,8 +215,23 @@ app.post('/reviews', (req, res) => {
     characteristics - object (characteristic_id and value)
 
   */
- let insertQuery = 'INSERT INTO reviews (product_id, rating, summary, body, recomment, name, email, photos) VALUES'
+ let insertQuery = 'INSERT INTO reviews (product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES ?'
+ let photosQuery = 'INSERT INTO reviews_photos (review_id, url) VALUES ?'
+ let characteristicsQuery = 'INSERT INTO '
  //post requirements
+})
+
+app.get('/test', (req, res) => {
+  let selectQuery = 'SELECT id FROM reviews ORDER BY id DESC LIMIT 1'
+  db.query(selectQuery, (err, result) => {
+    console.log(result[0].id)
+    let newSelect = `SELECT * FROM reviews WHERE id=${result[0].id}`
+    db.query(newSelect, (err, result) => {
+      res.send(result);
+    })
+    //result[0].id gives result
+
+  })
 })
 
 app.listen(PORT, () => {
