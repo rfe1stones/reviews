@@ -62,7 +62,7 @@ stream.on('data', function(data) {
   //console.log(newText[0])
   //console.log(data);
   stream.pause();
-    let insertQuery = 'INSERT INTO characteristic_reviews (id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES ?'
+    let insertQuery = 'INSERT INTO reviews (id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES ?'
     connection.query(insertQuery, [newText], (err, results) => {
       if(err) {
         console.log(err)
@@ -74,19 +74,11 @@ stream.on('data', function(data) {
     })
 
     count++;
-
-  //console.log('pause')
-  //count++;
-  //console.log(count)
-
-  //console.log(text.length);
-
-
 })
 .on('end', function() {
   console.log('check here')
 
-  let insertQuery = 'INSERT INTO characteristic_reviews (id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES ?'
+  let insertQuery = 'INSERT INTO reviews (id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES ?'
   lastPop = lastPop.split(',');
   connection.query(insertQuery, [[lastPop]], (err, results) => {
     if(err) {
